@@ -13,7 +13,7 @@ public class PlayerLogin extends PlayerListener {
     @Override
     public void onPlayerJoin(PlayerJoinEvent event) {
         String player_name = event.getPlayer().getName();
-        PlayerTimeStamp pts = PlayerTimeStamp.findTimeStamp(player_name);
+        PlayerTimeStamp pts = PlayerTimeStamp.get(player_name);
         if(pts == null) {
             FirstLastSeenDB.database.insert(new PlayerTimeStamp(player_name));
         }
@@ -31,8 +31,8 @@ public class PlayerLogin extends PlayerListener {
 
     private void onPlayerAction(PlayerEvent event) {
         String player_name = event.getPlayer().getName();
-        PlayerTimeStamp pts = PlayerTimeStamp.findTimeStamp(player_name);
-        pts.update();
+        PlayerTimeStamp pts = PlayerTimeStamp.get(player_name);
+        pts.setLastSeen();
         FirstLastSeenDB.database.save(pts);
     }
 }

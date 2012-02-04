@@ -1,5 +1,6 @@
 package pl.bluex.firstlastseendb;
 
+import com.avaje.ebean.ExpressionList;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -54,6 +55,10 @@ public class PlayerTimeStamp {
         this.lastSeen = lastSeen;
     }
 
+    public void setLastSeen() {
+        this.lastSeen = new Date();
+    }
+
     public Date getFirstSeen() {
         return firstSeen;
     }
@@ -70,15 +75,36 @@ public class PlayerTimeStamp {
         this.holiday = holidays;
     }
 
-    public void update() {
-        setLastSeen(new Date());
+    public void add() {
+        FirstLastSeenDB.database.insert(this);
+    }
+    
+    public void remove() {
+        FirstLastSeenDB.database.delete(this);
     }
 
-    public static PlayerTimeStamp findTimeStamp(String player_name){
-        return FirstLastSeenDB.database.
-                find(PlayerTimeStamp.class).
-                where().
-                ieq("player", player_name).
-                findUnique();
+    public void save() {
+        FirstLastSeenDB.database.save(this);
+    }
+
+    public PlayerTimeStamp copy() {
+        PlayerTimeStamp ad = this.copy();
+        ad.id = null;
+        return ad;
+    }
+
+    public static PlayerTimeStamp get(String player_name){
+        return FirstLastSeenDB.database
+                .find(PlayerTimeStamp.class)
+                .where()
+                .ieq("player", player_name)
+                .findUnique();
+    }
+
+    public static ExpressionList<PlayerTimeStamp> getHolidays(){
+        return FirstLastSeenDB.database
+                .find(PlayerTimeStamp.class)
+                .where()
+                .isNotNull("holiday");
     }
 }
