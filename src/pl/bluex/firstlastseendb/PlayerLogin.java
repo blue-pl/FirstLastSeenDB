@@ -1,38 +1,37 @@
 package pl.bluex.firstlastseendb;
 
-import org.bukkit.event.player.*;
+import java.util.Date;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 
-public class PlayerLogin extends PlayerListener {
-	private static FirstLastSeenDB plugin;
+public class PlayerLogin implements Listener {
 
-	public PlayerLogin(FirstLastSeenDB instance){
-		plugin = instance;
+	public PlayerLogin(FirstLastSeenDB plugin){
+		Bukkit.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-    @Override
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        String player_name = event.getPlayer().getName();
-        PlayerTimeStamp pts = PlayerTimeStamp.get(player_name);
-        if(pts == null) {
-            FirstLastSeenDB.database.insert(new PlayerTimeStamp(player_name));
-        }
-    }
-
-    @Override
-    public void onPlayerQuit(final PlayerQuitEvent event) {
         onPlayerAction(event);
     }
 
-    @Override
-    public void onPlayerKick(final PlayerKickEvent event) {
+    @EventHandler
+    public void onPlayerQuit(final PlayerQuitEvent event) {
         onPlayerAction(event);
     }
 
     private void onPlayerAction(PlayerEvent event) {
         String player_name = event.getPlayer().getName();
-        PlayerTimeStamp pts = PlayerTimeStamp.get(player_name);
-        pts.setLastSeen();
-        FirstLastSeenDB.database.save(pts);
+        PlayerTimeStamp pts = PlayerTimeStampManager.get(player_name);
+        if(pts == null) {
+            pts = new PlayerTimeStamp(player_name);
+        }
+        pts.setLastSeen(new Date());
+        PlayerTimeStampManager.save(pts);
     }
 }

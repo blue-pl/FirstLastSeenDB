@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.PersistenceException;
-import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,15 +14,14 @@ public class FirstLastSeenDB extends JavaPlugin {
     protected static String pluginName;
     protected static EbeanServer database;
 
+    private PlayerLogin playerLogin = null;
+
     @Override
     public void onEnable() {
         pluginName = getDescription().getName();
         PluginManager pm = getServer().getPluginManager();
         setupDatabase();
-        pm.registerEvent(Event.Type.PLAYER_JOIN,
-                new PlayerLogin(this), Event.Priority.Normal, this);
-        pm.registerEvent(Event.Type.PLAYER_QUIT,
-                new PlayerLogin(this), Event.Priority.Normal, this);
+        playerLogin = new PlayerLogin(this);
         log(Level.INFO, String.format("%s is enabled.", getDescription().getFullName()));
     }
 
@@ -33,7 +31,7 @@ public class FirstLastSeenDB extends JavaPlugin {
     }
 
     protected void log(Level level, String msg) {
-        logger.log(level, String.format("[%s]%s", pluginName, msg));
+        logger.log(level, String.format("[%s] %s", pluginName, msg));
     }
 
     private void setupDatabase() {
