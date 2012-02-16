@@ -1,6 +1,6 @@
 name: FirstLastSeenDB
 main: pl.bluex.firstlastseendb.FirstLastSeenDB
-version: 0.1
+version: 1.0
 description: Plugin rejestrujący w bazie obecność graczy na serwerze
 author: BlueX
 database: true
